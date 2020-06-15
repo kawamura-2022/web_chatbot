@@ -3,7 +3,12 @@
 ``` bash
 $ cd /var/www/web_service
 ```
-2. 3000 番ポートで,Railsのサービス開始
+2. DB作成
+
+```
+$ docker-compose run web_chatbot_service rake db:create
+```
+3. 3000 番ポートで,Railsのサービス開始
 ```
 $ docker-compose up
 ```
