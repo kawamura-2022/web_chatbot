@@ -1,0 +1,17 @@
+version: '3'
+services:
+  web_chatbot_service:
+    build: ./docker/rails
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    volumes:
+      - ./docker/rails:/myapp
+    ports:
+      - "3000:3000"
+    depends_on:
+      - docker_db
+  docker_db:
+    image: postgres
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: 'trust'  ##全てのアクセスを認証レスで許可（ローカル開発のみ）
