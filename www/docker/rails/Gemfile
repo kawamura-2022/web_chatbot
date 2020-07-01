@@ -50,5 +50,10 @@ group :test do
   gem 'webdrivers'
 end
 
+# rails c を日本語に対応させる
+gem 'rb-readline'
+# ruby内で環境変数を使えるようにする
+gem 'dotenv-rails'
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]

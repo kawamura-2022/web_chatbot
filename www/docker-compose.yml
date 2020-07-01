@@ -11,7 +11,10 @@ services:
       - docker_db
   docker_db:
     image: postgres
+    container_name: "docker_db"
     volumes:
       - ./tmp/db:/var/lib/postgresql/data
+      - ./postgres/initdb:/docker-entrypoint-initdb.d
     environment:
-      POSTGRES_HOST_AUTH_METHOD: 'trust'  ##全てのアクセスを認証レスで許可（ローカル開発のみ）
+      # POSTGRES_HOST_AUTH_METHOD: 'trust'  ##全てのアクセスを認証レスで許可（ローカル開発のみ）
+      - POSTGRES_PASSWORD=password
