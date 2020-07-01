@@ -1,33 +1,25 @@
 # web_chatbot
+機械学習を用いたwebアプリケーションです．
 
-初期ページ → / (home#top)
+発言の意見を分類し，適切な反応を返します．
 
-投稿ボタンを押す → post home/create (home#create)
+研究で学んだ自然言語処理を応用しています．
 
-投稿ボタンを押すと，home/craeteが呼び出され，PostgreSQLにデータ(テキスト，created_at，update_at)を格納する
+## 制作目的
+個々人が新技術を学ぶため．また，みんなで楽しく，助け合いながら，１つのサービスを作成する経験のため．
 
-# 個人的メモ (DEV)
+## 利用技術 (予定)
+AWS, Docker, Ruby, Ruby on Rails 6, JavaScript, Go, Python, PostgreSQL
 
-## データベース
+## 作成者
+インフラ
 
-PostgreSQLを利用．
+Naoki Kawamura (https://github.com/kawamura-2022)
 
-postgreデータベース/Postテーブル (ActiveRecordにはテーブル名はデータベース名+sとするルールがあるので，後ほど変更)(.env実装のタイミング？)
+フロントエンド
 
-developmentでは，myapp_development データベースを利用．
+Atsuya Sakai (https://github.com/Sakai1711)
 
-| NAME | VALUE | OPTION |
-| --- | --- | --- |
-| post_id (PRIMARY KEY) | SERIAL | NOT NULL |
-| content | TEXT | NOT NULL |
-| created_at | timestamp with time zone |  |
-| update_date | timestamp with time zone|  |
+サーバーサイド
 
-
-## やること
-
-・自動的にDBが立ち上げられて，みんなが使えるようにする
-
-・データを取得し，機械学習APIに投げるメソッド
-
-・セキュリティ考慮(.env)
+Takumi Sato (https://github.com/takuminoid)
