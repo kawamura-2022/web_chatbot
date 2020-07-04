@@ -1,5 +1,5 @@
 class Dblib # ファイル名とclass名は一緒にする必要がある
-  def insert(content) # content をDBに格納するメソッド
+  def connect_db()
     require 'pg'
     begin
       # DB へ接続
@@ -13,7 +13,11 @@ class Dblib # ファイル名とclass名は一緒にする必要がある
       p "ConnectionError"
       p error
     end
+    return conn
+  end
 
+  def insert(content) # content をDBに格納するメソッド
+    conn = connect_db()
     begin
       sql = "INSERT INTO post (content, created_at, update_date)VALUES('#{content}', current_timestamp, current_timestamp);"
       result = conn.exec(sql)
@@ -23,20 +27,7 @@ class Dblib # ファイル名とclass名は一緒にする必要がある
   end
 
   def ai_insert(content) # content をDBに格納するメソッド (AIの発言)
-    require 'pg'
-    begin
-      # DB へ接続
-      conn = PG::connect(:host => "docker_db",
-                        :user => "postgres",
-                        :password => "password",
-                        :dbname => "myapp_development",
-                        :port =>"5432")
-      # p "ConnectionSuccess"
-    rescue => error
-      p "ConnectionError"
-      p error
-    end
-
+    conn = connect_db()
     begin
       sql = "INSERT INTO ai_post (content, created_at, update_date)VALUES('#{content}', current_timestamp, current_timestamp);"
       result = conn.exec(sql)
@@ -46,20 +37,7 @@ class Dblib # ファイル名とclass名は一緒にする必要がある
   end
 
   def select_comment() # 叩くと，DBに格納されているAIの最新のコメントが取得できる
-    require 'pg'
-    begin
-      # DB へ接続
-      conn = PG::connect(:host => "docker_db",
-                        :user => "postgres",
-                        :password => "password",
-                        :dbname => "myapp_development",
-                        :port =>"5432")
-      # p "ConnectionSuccess"
-    rescue => error
-      p "ConnectionError"
-      p error
-    end
-
+    conn = connect_db()
     begin
       sql = "SELECT content FROM ai_post ORDER BY post_id DESC;" # IDの降順で取得つまり最新のAIコメントを取得
       result = conn.exec(sql)
@@ -75,7 +53,15 @@ class Dblib # ファイル名とclass名は一緒にする必要がある
       require 'json'
       # require './app/lib/config'
       # API 呼び出し
-      url = "http://13.231.173.156:8000//api/extractor_mri"
+      conn = connect_db()
+      begin
+        sql = "SELECT content FROM private_key WHERE name='extractor_url';"
+        result = conn.exec(sql)
+      ensure
+        conn.finish
+      end
+      url = result[0]['content']
+
       lis_content = Array.new([content])
       params = {'input' => lis_content}
 
