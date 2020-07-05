@@ -67,18 +67,17 @@ class Dblib # ファイル名とclass名は一緒にする必要がある
       return result['output'][0]['class'] # "issue" or "idea" or "pros_and_cons"
   end
 
+  def get_template(ibis)
+    sql = "SELECT * FROM comment_template WHERE class='#{ibis}';"
+    templates = @conn.exec(sql)
+    template = templates[rand(templates.count)]['content'] # classのテンプレートをランダムに取得
+    return template
+  end
+
   def get_aicomment(content)
       ibis = call_extractor(content)
-      puts ibis
-      if ibis == "issue" then
-        return "これはissueですね！"
-      elsif ibis == "idea" then
-        return "これはideaですね！"
-      elsif ibis == "pros_and_cons" then
-        return "これはpro/conですね！"
-      else
-        return "これはなんですか？！"
-      end
+      puts ibis # "issue" or "idea" or "pros_and_cons"
+      return get_template(ibis)
   end
 
   def db_close()
