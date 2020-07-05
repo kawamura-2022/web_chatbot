@@ -1,4 +1,9 @@
 class Dblib # ファイル名とclass名は一緒にする必要がある
+  def initialize()
+    # DB接続
+    @conn = connect_db()
+  end
+
   def connect_db()
     require 'pg'
     begin
@@ -17,33 +22,18 @@ class Dblib # ファイル名とclass名は一緒にする必要がある
   end
 
   def insert(content) # content をDBに格納するメソッド
-    conn = connect_db()
-    begin
-      sql = "INSERT INTO post (content, created_at, update_date)VALUES('#{content}', current_timestamp, current_timestamp);"
-      result = conn.exec(sql)
-    ensure
-      conn.finish
-    end
+    sql = "INSERT INTO post (content, created_at, update_date)VALUES('#{content}', current_timestamp, current_timestamp);"
+    result = @conn.exec(sql)
   end
 
   def ai_insert(content) # content をDBに格納するメソッド (AIの発言)
-    conn = connect_db()
-    begin
-      sql = "INSERT INTO ai_post (content, created_at, update_date)VALUES('#{content}', current_timestamp, current_timestamp);"
-      result = conn.exec(sql)
-    ensure
-      conn.finish
-    end
+    sql = "INSERT INTO ai_post (content, created_at, update_date)VALUES('#{content}', current_timestamp, current_timestamp);"
+    result = @conn.exec(sql)
   end
 
   def select_comment() # 叩くと，DBに格納されているAIの最新のコメントが取得できる
-    conn = connect_db()
-    begin
-      sql = "SELECT content FROM ai_post ORDER BY post_id DESC;" # IDの降順で取得つまり最新のAIコメントを取得
-      result = conn.exec(sql)
-    ensure
-      conn.finish
-    end
+    sql = "SELECT content FROM ai_post ORDER BY post_id DESC;" # IDの降順で取得つまり最新のAIコメントを取得
+    result = @conn.exec(sql)
     return result[0]['content']
   end
 
@@ -52,19 +42,15 @@ class Dblib # ファイル名とclass名は一緒にする必要がある
       require 'uri'
       require 'json'
       # require './app/lib/config'
-      # API 呼び出し
-      conn = connect_db()
-      begin
-        sql = "SELECT content FROM private_key WHERE name='extractor_url';"
-        result = conn.exec(sql)
-      ensure
-        conn.finish
-      end
+      #URL呼び出し
+      sql = "SELECT content FROM private_key WHERE name='extractor_url';"
+      result = @conn.exec(sql)
       url = result[0]['content']
 
       lis_content = Array.new([content])
       params = {'input' => lis_content}
 
+      # API 呼び出し
       uri = URI.parse(url)
       http = Net::HTTP.new(uri.host, uri.port)
       http.open_timeout = 5
@@ -93,6 +79,10 @@ class Dblib # ファイル名とclass名は一緒にする必要がある
       else
         return "これはなんですか？！"
       end
+  end
+
+  def db_close()
+    @conn.finish
   end
 
 end
