@@ -37,6 +37,12 @@ class Dblib # ファイル名とclass名は一緒にする必要がある
     return result[0]['content']
   end
 
+  def select_user_comment() # 叩くと，DBに格納されているAIの最新のコメントが取得できる
+    sql = "SELECT content FROM post ORDER BY post_id DESC;" # IDの降順で取得つまり最新のAIコメントを取得
+    result = @conn.exec(sql)
+    return result[0]['content']
+  end
+
   def call_extractor(content) # contentを入力すると，エクストラクターAPIを呼び出して，IBISを返す
       require 'net/http'
       require 'uri'

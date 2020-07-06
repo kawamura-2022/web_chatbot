@@ -2,15 +2,47 @@
   <div class="container">
     <h1 class="form-heading">投稿する</h1>
     <div class="form">
-    <%= form_tag("/home/create") do %>
+      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
       <div class="form-body">
-        <textarea name="content"></textarea>
-        <input type="submit" value="投稿">
+        <div class="outputBox">
+        <script type="text/javascript">
+        function dispHist() {
+          <% require "./app/lib/Dblib"
+          dblib = Dblib.new() %>
+          inputText = document.getElementById("textBox").value;
+          document.getElementById("textBox").value = ""
+          var hist = document.getElementById("postHist");
+
+          var textNode = document.createTextNode("You："+inputText);
+          hist.appendChild(textNode);
+          var br = document.createElement("br");
+          hist.appendChild(br);
+
+          $.ajax({
+            async: false,
+            url: '/rails_db',
+            type: "GET",
+            dataType: "json",
+            data: {"comment": inputText}
+            }).done(function(data){
+              aiText = data.ai_comment;
+          });
+
+          var textNode = document.createTextNode("Bot："+aiText);
+          hist.appendChild(textNode);
+          var br = document.createElement("br");
+          hist.appendChild(br);
+        };
+        function resetHist() {
+          document.getElementById("postHist").innerHTML = "";
+        };
+        </script>
+        <p class="outputPost" id="postHist"></p>
+        </div>
+        <textarea name="content" id="textBox"></textarea>
+        <input type="submit" value="投稿" onclick="dispHist()">
+        <button type="button" class="resetButton" onclick="resetHist()">クリア</button>
       </div>
-    <% end %>
-    <%= require "./app/lib/Dblib"
-      p Dblib.new().select_comment()
-    %>
     </div>
   </div>
 </div>
